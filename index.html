@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced Order Tracking System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      width: 420px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 75%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: green;
+      transition: 0.5s;
+    }
+
+    .status {
+      margin-top: 15px;
+      text-align: left;
+    }
+
+    .step {
+      padding: 10px;
+      margin: 5px 0;
+      border-left: 5px solid gray;
+      background: #eee;
+      border-radius: 5px;
+      opacity: 0.6;
+    }
+
+    .active {
+      border-left: 5px solid green;
+      background: #d4edda;
+      opacity: 1;
+      font-weight: bold;
+    }
+
+    .dark {
+      background: #1e1e1e;
+      color: white;
+    }
+
+    .dark .container {
+      background: #2c2c2c;
+    }
+
+    .dark .step {
+      background: #444;
+      color: white;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Order Tracking System</h2>
+
+  <input type="text" id="orderId" placeholder="Enter Order ID">
+  <br>
+  <button onclick="trackOrder()">Track</button>
+  <button onclick="generateRandom()">Random Order</button>
+  <button onclick="toggleDarkMode()">Dark Mode</button>
+
+  <div class="progress-bar">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div class="status" id="statusBox"></div>
+  <div class="error" id="errorMsg"></div>
+</div>
+
+<script>
+  const orders = {
+    "1001": { step: 1, name: "Laptop" },
+    "1002": { step: 2, name: "Mobile" },
+    "1003": { step: 3, name: "Shoes" },
+    "1004": { step: 4, name: "Watch" }
+  };
+
+  const steps = [
+    "Order Placed",
+    "Shipped",
+    "Out for Delivery",
+    "Delivered"
+  ];
+
+  function trackOrder() {
+    const id = document.getElementById("orderId").value;
+    const statusBox = document.getElementById("statusBox");
+    const errorMsg = document.getElementById("errorMsg");
+    const progress = document.getElementById("progress");
+
+    statusBox.innerHTML = "";
+    errorMsg.innerText = "";
+
+    if (!orders[id]) {
+      errorMsg.innerText = "Invalid Order ID";
+      progress.style.width = "0%";
+      return;
+    }
+
+    let currentStep = orders[id].step;
+
+    // Progress bar update
+    let percent = (currentStep / steps.length) * 100;
+    progress.style.width = percent + "%";
+
+    // Show order name
+    let title = document.createElement("h4");
+    title.innerText = "Product: " + orders[id].name;
+    statusBox.appendChild(title);
+
+    // Steps
+    steps.forEach((step, index) => {
+      let div = document.createElement("div");
+      div.classList.add("step");
+
+      if (index < currentStep) {
+        div.classList.add("active");
+      }
+
+      div.innerText = step;
+      statusBox.appendChild(div);
+    });
+  }
+
+  function generateRandom() {
+    const keys = Object.keys(orders);
+    const randomId = keys[Math.floor(Math.random() * keys.length)];
